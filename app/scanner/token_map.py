@@ -27,6 +27,12 @@ class TokenType(Enum):
     BANG = auto()
     BANG_EQUAL = auto()
 
+    # WHITESPACE
+    WHITE_SPACE = auto()
+    TABSPACE = auto()
+    CARRIAGE_RETURN = auto()
+    NEW_LINE = auto()
+
 
 TOKEN_MAP: Dict[str, TokenType] = {
     # Single Char Tokens
@@ -49,6 +55,10 @@ TOKEN_MAP: Dict[str, TokenType] = {
     ">=": TokenType.GREATER_EQUAL,
     "!": TokenType.BANG,
     "!=": TokenType.BANG_EQUAL,
+    " ": TokenType.WHITE_SPACE,
+    "\t": TokenType.TABSPACE,
+    "\r": TokenType.CARRIAGE_RETURN,
+    "\n": TokenType.NEW_LINE,
 }
 
 CONDITION_EQUAL_MAP: Dict[TokenType, TokenType] = {

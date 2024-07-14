@@ -29,7 +29,7 @@ class Scanner:
         return c
 
     def scan_token(self) -> None:
-        c: str = self.advance()
+        c = self.advance()
         if token_type := TOKEN_MAP.get(c):
             if token_type in CONDITION_EQUAL_MAP.keys():
                 token_type = (
@@ -37,11 +37,20 @@ class Scanner:
                     if self.is_match("=")
                     else token_type
                 )
-            if c == "/":
+            elif token_type == TokenType.SLASH:
                 if self.is_match("/"):
                     while self.peek() != "\n" and not self.is_end_of_content():
                         self.advance()
                     return
+            elif token_type in [
+                TokenType.WHITE_SPACE,
+                TokenType.TABSPACE,
+                TokenType.CARRIAGE_RETURN,
+            ]:
+                return
+            elif token_type == TokenType.NEW_LINE:
+                self.line += 1
+                return
             self.add_token(token_type)
         else:
             self.lox.error(self.line, f"Unexpected character: {c}")
