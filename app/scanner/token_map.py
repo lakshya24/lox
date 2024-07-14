@@ -16,12 +16,16 @@ class TokenType(Enum):
     SEMICOLON = auto()
     SLASH = auto()
     STAR = auto()
+
+    # Operators
     EQUAL = auto()
     EQUAL_EQUAL = auto()
     LESS = auto()
     LESS_EQUAL = auto()
     GREATER = auto()
     GREATER_EQUAL = auto()
+    BANG = auto()
+    BANG_EQUAL = auto()
 
 
 TOKEN_MAP: Dict[str, TokenType] = {
@@ -43,10 +47,13 @@ TOKEN_MAP: Dict[str, TokenType] = {
     "<=": TokenType.LESS_EQUAL,
     ">": TokenType.GREATER,
     ">=": TokenType.GREATER_EQUAL,
+    "!": TokenType.BANG,
+    "!=": TokenType.BANG_EQUAL,
 }
 
 CONDITION_EQUAL_MAP: Dict[TokenType, TokenType] = {
     TokenType.LESS: TokenType.LESS_EQUAL,
     TokenType.GREATER: TokenType.GREATER_EQUAL,
     TokenType.EQUAL: TokenType.EQUAL_EQUAL,
+    TokenType.BANG: TokenType.BANG_EQUAL,
 }
