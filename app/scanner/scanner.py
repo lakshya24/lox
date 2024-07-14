@@ -1,7 +1,12 @@
 from typing import List
 from app.lox import Lox
 from app.scanner.token import Token
-from app.scanner.token_map import CONDITION_EQUAL_MAP, TOKEN_MAP, TokenType
+from app.scanner.token_map import (
+    CONDITION_EQUAL_MAP,
+    KEYWORDS_MAP,
+    TOKEN_MAP,
+    TokenType,
+)
 from decimal import Decimal
 
 
@@ -56,8 +61,10 @@ class Scanner:
                 self.string()
                 return
             self.add_token(token_type)
-        elif c.isdigit():
+        elif self._is_digit(c):
             self.number()
+        elif self._is_alpha(c):
+            self.identifier()
         else:
             self.lox.error(self.line, f"Unexpected character: {c}")
 
@@ -96,11 +103,32 @@ class Scanner:
         self.add_token(TokenType.STRING, value)
 
     def number(self) -> None:
-        while self.peek().isdigit():
+        while self._is_digit(self.peek()):
             self.advance()
-        if self.peek() == "." and self.peek_next().isdigit():
+        if self.peek() == "." and self._is_digit(self.peek_next()):
             self.advance()
-            while self.peek().isdigit():
+            while self._is_digit(self.peek()):
                 self.advance()
         value = self.source[self.start : self.current]
         self.add_token(TokenType.NUMBER, float(value))
+
+    def identifier(self) -> None:
+        while self._is_alpha_numeric(self.peek()):
+            self.advance()
+        value = self.source[self.start : self.current]
+        if value not in KEYWORDS_MAP:
+            self.add_token(TokenType.IDENTIFIER)
+            return
+        self.add_token(KEYWORDS_MAP[value])
+
+    def _is_digit(self, c):
+        return "0" <= c <= "9"
+
+    def _is_alpha(self, c):
+        return (c >= "a" and c <= "z") or (c >= "A" and c <= "Z") or c == "_"
+
+    def _is_alpha_numeric(self, c):
+        return self._is_alpha(c) or self._is_digit(c)
+
+    def keywords(self, word):
+        return word in []
