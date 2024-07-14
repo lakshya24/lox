@@ -9,6 +9,6 @@ class Token:
         self.line = line
 
     def __str__(self):
-        if not self.literal:
+        if self.literal is None:
             return f"{self.token_type.name} {self.lexeme} null"
         return f"{self.token_type.name} {self.lexeme} {self.literal}"
