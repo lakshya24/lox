@@ -1,7 +1,7 @@
 from typing import List
 from app.lox import Lox
 from app.scanner.token import Token
-from app.scanner.token_map import TOKEN_MAP, TokenType
+from app.scanner.token_map import CONDITION_EQUAL_MAP, TOKEN_MAP, TokenType
 
 
 class Scanner:
@@ -32,6 +32,21 @@ class Scanner:
         c: str = self.advance()
         if token_type := TOKEN_MAP.get(c):
             text = self.source[self.start : self.current]
+            if token_type in CONDITION_EQUAL_MAP.keys():
+                token_type = (
+                    CONDITION_EQUAL_MAP[token_type]
+                    if self.is_match_equal("=")
+                    else token_type
+                )
+                text = self.source[self.start : self.current]
             self.tokens.append(Token(token_type, text, None, self.line))
         else:
             self.lox.error(self.line, f"Unexpected character: {c}")
+
+    def is_match_equal(self, expected):
+        if self.is_end_of_content():
+            return False
+        if self.source[self.current] != expected:
+            return False
+        self.current += 1
+        return True
