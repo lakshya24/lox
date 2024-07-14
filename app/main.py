@@ -1,5 +1,6 @@
 import sys
 
+from app.lox import Lox
 from app.scanner.scanner import Scanner
 
 
@@ -18,18 +19,7 @@ def main():
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)
 
-    with open(filename) as file:
-        file_contents = file.read()
-
-    # Uncomment this block to pass the first stage
-    if file_contents:
-        scanner = Scanner(file_contents)
-        for token in scanner.tokenize():
-            print(token)
-    else:
-        print(
-            "EOF  null"
-        )  # Placeholder, remove this line when implementing the scanner
+    Lox().process_file(filename)
 
 
 if __name__ == "__main__":
