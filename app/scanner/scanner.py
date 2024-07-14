@@ -51,6 +51,9 @@ class Scanner:
             elif token_type == TokenType.NEW_LINE:
                 self.line += 1
                 return
+            elif token_type == TokenType.STRING:
+                self.string()
+                return
             self.add_token(token_type)
         else:
             self.lox.error(self.line, f"Unexpected character: {c}")
@@ -71,3 +74,15 @@ class Scanner:
         if self.is_end_of_content():
             return "\0"
         return self.source[self.current]
+
+    def string(self) -> None:
+        while self.peek() != '"' and not self.is_end_of_content():
+            if self.peek() == "\n":
+                self.line += 1
+            self.advance()
+        if self.is_end_of_content():
+            self.lox.error(self.line, "Unterminated string.")
+            return
+        self.advance()
+        value = self.source[self.start + 1 : self.current - 1]
+        self.add_token(TokenType.STRING, value)

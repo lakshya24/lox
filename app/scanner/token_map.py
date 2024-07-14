@@ -33,6 +33,9 @@ class TokenType(Enum):
     CARRIAGE_RETURN = auto()
     NEW_LINE = auto()
 
+    # Strings
+    STRING = auto()
+
 
 TOKEN_MAP: Dict[str, TokenType] = {
     # Single Char Tokens
@@ -59,6 +62,7 @@ TOKEN_MAP: Dict[str, TokenType] = {
     "\t": TokenType.TABSPACE,
     "\r": TokenType.CARRIAGE_RETURN,
     "\n": TokenType.NEW_LINE,
+    '"': TokenType.STRING,
 }
 
 CONDITION_EQUAL_MAP: Dict[TokenType, TokenType] = {
