@@ -6,7 +6,7 @@ from app.scanner.token_map import CONDITION_EQUAL_MAP, TOKEN_MAP, TokenType
 
 class Scanner:
     def __init__(self, source: str, lox: Lox) -> None:
-        self.source = source
+        self.source: str = source
         self.tokens: List[Token] = []
         self.start: int = 0
         self.current: int = 0
@@ -31,22 +31,34 @@ class Scanner:
     def scan_token(self) -> None:
         c: str = self.advance()
         if token_type := TOKEN_MAP.get(c):
-            text = self.source[self.start : self.current]
             if token_type in CONDITION_EQUAL_MAP.keys():
                 token_type = (
                     CONDITION_EQUAL_MAP[token_type]
-                    if self.is_match_equal("=")
+                    if self.is_match("=")
                     else token_type
                 )
-                text = self.source[self.start : self.current]
-            self.tokens.append(Token(token_type, text, None, self.line))
+            if c == "/":
+                if self.is_match("/"):
+                    while self.peek() != "\n" and not self.is_end_of_content():
+                        self.advance()
+                    return
+            self.add_token(token_type)
         else:
             self.lox.error(self.line, f"Unexpected character: {c}")
 
-    def is_match_equal(self, expected):
+    def add_token(self, token_type, literal=None):
+        text = self.source[self.start : self.current]
+        self.tokens.append(Token(token_type, text, literal, self.line))
+
+    def is_match(self, expected):
         if self.is_end_of_content():
             return False
         if self.source[self.current] != expected:
             return False
         self.current += 1
         return True
+
+    def peek(self) -> str:
+        if self.is_end_of_content():
+            return "\0"
+        return self.source[self.current]
