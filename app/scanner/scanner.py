@@ -2,6 +2,7 @@ from typing import List
 from app.lox import Lox
 from app.scanner.token import Token
 from app.scanner.token_map import CONDITION_EQUAL_MAP, TOKEN_MAP, TokenType
+from decimal import Decimal
 
 
 class Scanner:
@@ -55,6 +56,8 @@ class Scanner:
                 self.string()
                 return
             self.add_token(token_type)
+        elif c.isdigit():
+            self.number()
         else:
             self.lox.error(self.line, f"Unexpected character: {c}")
 
@@ -75,6 +78,11 @@ class Scanner:
             return "\0"
         return self.source[self.current]
 
+    def peek_next(self) -> str:
+        if self.current + 1 >= len(self.source):
+            return "\0"
+        return self.source[self.current + 1]
+
     def string(self) -> None:
         while self.peek() != '"' and not self.is_end_of_content():
             if self.peek() == "\n":
@@ -86,3 +94,13 @@ class Scanner:
         self.advance()
         value = self.source[self.start + 1 : self.current - 1]
         self.add_token(TokenType.STRING, value)
+
+    def number(self) -> None:
+        while self.peek().isdigit():
+            self.advance()
+        if self.peek() == "." and self.peek_next().isdigit():
+            self.advance()
+            while self.peek().isdigit():
+                self.advance()
+        value = self.source[self.start : self.current]
+        self.add_token(TokenType.NUMBER, float(value))

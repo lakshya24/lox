@@ -36,6 +36,9 @@ class TokenType(Enum):
     # Strings
     STRING = auto()
 
+    # Number
+    NUMBER = auto()
+
 
 TOKEN_MAP: Dict[str, TokenType] = {
     # Single Char Tokens
